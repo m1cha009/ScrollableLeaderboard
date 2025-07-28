@@ -60,7 +60,7 @@ namespace Code
 			for (var index = 0; index < widgets.Count; index++)
 			{
 				Widget widget = widgets[index];
-				widget.Rect.DOAnchorPosY(lastPlayerPosition - (index * widget.GetHeight()), 5f);
+				widget.Rect.DOAnchorPosY(-lastPlayerPosition - (index * widget.GetHeight()), 2f);
 			}
 		}
 	}
