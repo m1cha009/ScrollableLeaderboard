@@ -11,6 +11,8 @@ namespace Code
 
 		private RectTransform _rectT;
 
+		private int _index;
+
 		private void Awake()
 		{
 			_rectT = transform as RectTransform;
@@ -20,7 +22,11 @@ namespace Code
 		{
 			gameObject.name = $"{value}";
 			text.SetText($"{value}");
+
+			_index = value;
 		}
+
+		public int GetIndex() => _index;
 
 		public void SetPosition(Vector2 newPosition)
 		{
@@ -30,6 +36,8 @@ namespace Code
 			
 			_rectT.anchoredPosition = newPosition;
 		}
+		
+		public Vector2 GetPosition() => _rectT.anchoredPosition;
 		
 		public float GetHeight() => _rectT.rect.height;
 	}

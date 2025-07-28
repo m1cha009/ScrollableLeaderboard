@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
@@ -12,21 +11,39 @@ namespace Code
 		[SF] private RectTransform _contentRect;
 		[SF] private float _spacing;
 		
-		[SF] private int _currentPlayerIndex;
+		[SF] private int _lastPlayerIndex;
+		[SF] private int _newPlayerIndex;
 
 		[SF] private int _totalPlayers;
 
 		private int _previousPlayerIndex;
 		private float _widgetHeight;
 		private List<Widget> _widgets = new();
+		
+		private int _firstWidgetIndex;
+		private int _lastWidgetIndex;
+		
+		private Vector2 _previousContentPosition = Vector2.zero;
+
+		private void Start()
+		{
+			_previousContentPosition = _contentRect.anchoredPosition;
+		}
 
 		private void Update()
 		{
-			if (_currentPlayerIndex != _previousPlayerIndex)
+			if (_lastPlayerIndex != _previousPlayerIndex)
 			{
-				Setup(_currentPlayerIndex);
+				Setup(_lastPlayerIndex);
 				
-				_previousPlayerIndex = _currentPlayerIndex;
+				_previousPlayerIndex = _lastPlayerIndex;
+				
+				_previousContentPosition = _contentRect.anchoredPosition;
+			}
+
+			if (IsContentNeedUpdate())
+			{
+				_previousContentPosition = _contentRect.anchoredPosition;
 			}
 		}
 
@@ -51,8 +68,20 @@ namespace Code
 			SetupContentSize();
 
 			AlignContentCurrentPlayerWithViewPort();
+
 		}
 
+		public float GetPlayerContentPosition()
+		{
+			var currentWidgetPosition = _newPlayerIndex * (_widgetHeight + _spacing);
+			var viewPortCenter = _viewPort.rect.height * 0.5f;
+			var widgetHalfHeight = _widgetHeight * 0.5f;
+			
+			var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
+
+			return contentPosition;
+		}
+		
 		private int GetMaxWidgetsAmountInViewPort()
 		{
 			_widgetHeight = _widgetPrefab.GetComponent<RectTransform>().rect.height;
@@ -80,6 +109,9 @@ namespace Code
 				
 				_widgets.Add(widget);
 			}
+			
+			_firstWidgetIndex = 0;
+			_lastWidgetIndex = _widgets.Count - 1;
 		}
 
 		private Widget SpawnWidget(int index)
@@ -98,7 +130,7 @@ namespace Code
 
 		private void AlignContentCurrentPlayerWithViewPort()
 		{
-			var currentWidgetPosition = _currentPlayerIndex * (_widgetHeight + _spacing);
+			var currentWidgetPosition = _lastPlayerIndex * (_widgetHeight + _spacing);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
 			var widgetHalfHeight = _widgetHeight * 0.5f;
 
@@ -106,5 +138,59 @@ namespace Code
 			
 			_contentRect.anchoredPosition = new Vector2(_contentRect.anchoredPosition.x, contentPosition);
 		}
+
+		private bool IsContentNeedUpdate()
+		{
+			var currentContentPosition = _contentRect.anchoredPosition;
+
+			var upperThreshold = _previousContentPosition.y + _widgetHeight;
+			var lowerThreshold = _previousContentPosition.y - _widgetHeight;
+			
+			if (_contentRect.anchoredPosition.y > upperThreshold)
+			{
+				MoveWidgetToBottom();
+
+				return true;
+			}
+			
+			if (_contentRect.anchoredPosition.y < lowerThreshold)
+			{
+				MoveWidgetToTop();
+				
+				return true;
+			}
+
+			return false;
+		}
+
+		private void MoveWidgetToBottom()
+		{
+			var firstWidget = _widgets[_firstWidgetIndex];
+			var lastWidget = _widgets[_lastWidgetIndex];
+			
+			var newPosition = lastWidget.GetPosition().y + -lastWidget.GetHeight() + _spacing;
+			
+			firstWidget.SetPosition(new Vector2(0, newPosition));
+			firstWidget.SetName(lastWidget.GetIndex() + 1);
+			
+			_lastWidgetIndex = _firstWidgetIndex;
+			_firstWidgetIndex = (_firstWidgetIndex + 1) % _widgets.Count;
+		}
+		
+		private void MoveWidgetToTop()
+		{
+			Debug.Log($"Move to the top");
+
+			var firstWidget = _widgets[_firstWidgetIndex];
+			var lastWidget = _widgets[_lastWidgetIndex];
+			
+			var newPosition = firstWidget.GetPosition().y + firstWidget.GetHeight() + _spacing;
+			lastWidget.SetPosition(new Vector2(0, newPosition));
+			lastWidget.SetName(firstWidget.GetIndex() - 1);
+			
+			_firstWidgetIndex = _lastWidgetIndex;
+			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;
+		}
+
 	}
 }
