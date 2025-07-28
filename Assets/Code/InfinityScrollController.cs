@@ -141,8 +141,6 @@ namespace Code
 
 		private bool IsContentNeedUpdate()
 		{
-			var currentContentPosition = _contentRect.anchoredPosition;
-
 			var upperThreshold = _previousContentPosition.y + _widgetHeight + _spacing;
 			var lowerThreshold = _previousContentPosition.y - _widgetHeight - _spacing;
 			
@@ -155,8 +153,6 @@ namespace Code
 			
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
-				Debug.Log($"Moved widget. {lowerThreshold}, Content pos: {_contentRect.anchoredPosition.y}");
-				
 				MoveWidgetToTop();
 				
 				return true;
@@ -181,12 +177,11 @@ namespace Code
 		
 		private void MoveWidgetToTop()
 		{
-			Debug.Log($"Move to the top");
-
 			var firstWidget = _widgets[_firstWidgetIndex];
 			var lastWidget = _widgets[_lastWidgetIndex];
 			
 			var newPosition = firstWidget.GetPosition().y + firstWidget.GetHeight() + _spacing;
+			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
 			lastWidget.SetName(firstWidget.GetIndex() - 1);
 			
