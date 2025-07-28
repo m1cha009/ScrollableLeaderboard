@@ -8,9 +8,9 @@ namespace Code
 	{
 		[SF] private TMP_Text text;
 
-		private RectTransform _rectT;
-
 		private int _index;
+		
+		public RectTransform Rect { get; set; }
 		
 		public bool IsNewPlayer { get; private set; }
 		
@@ -18,7 +18,7 @@ namespace Code
 
 		private void Awake()
 		{
-			_rectT = transform as RectTransform;
+			Rect = transform as RectTransform;
 		}
 
 		public void SetName(int value)
@@ -33,11 +33,11 @@ namespace Code
 
 		public void SetPosition(Vector2 newPosition)
 		{
-			_rectT.anchorMin = new Vector2(0.5f, 1f);
-			_rectT.anchorMax = new Vector2(0.5f, 1f);
-			_rectT.pivot = new Vector2(0.5f, 1f);
+			Rect.anchorMin = new Vector2(0.5f, 1f);
+			Rect.anchorMax = new Vector2(0.5f, 1f);
+			Rect.pivot = new Vector2(0.5f, 1f);
 			
-			_rectT.anchoredPosition = newPosition;
+			Rect.anchoredPosition = newPosition;
 		}
 
 		public void SetIsLastPlayer(bool isLastPlayer = false)
@@ -50,8 +50,8 @@ namespace Code
 			IsNewPlayer = isNewPlayer;
 		}
 		
-		public Vector2 GetPosition() => _rectT.anchoredPosition;
+		public Vector2 GetPosition() => Rect.anchoredPosition;
 		
-		public float GetHeight() => _rectT.rect.height;
+		public float GetHeight() => Rect.rect.height;
 	}
 }

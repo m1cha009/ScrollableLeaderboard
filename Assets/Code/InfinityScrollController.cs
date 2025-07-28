@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -72,7 +73,7 @@ namespace Code
 
 		}
 
-		public float GetPlayerContentPosition()
+		public float GetNewPlayerContentPosition()
 		{
 			var currentWidgetPosition = _newPlayerRank * (_widgetHeight + _spacing);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
@@ -81,6 +82,17 @@ namespace Code
 			var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
 
 			return contentPosition;
+		}
+
+		public float GetLastPlayerContentPosition()
+		{
+			var currentWidgetPosition = _lastPlayerRank * (_widgetHeight + _spacing);
+			// var viewPortCenter = _viewPort.rect.height * 0.5f;
+			// var widgetHalfHeight = _widgetHeight * 0.5f;
+			//
+			// var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
+
+			return currentWidgetPosition;
 		}
 		
 		public bool TryGetLastPlayerWidget(out Widget outWidget)
@@ -96,7 +108,23 @@ namespace Code
 			
 			outWidget = null;
 			return false;
-		} 
+		}
+
+		public List<Widget> GetBelowPlayerWidgets()
+		{
+			var widgets = new List<Widget>();
+			
+			foreach (Widget widget in _widgets)
+			{
+				if (widget.GetIndex() > _lastPlayerRank)
+				{
+					widgets.Add(widget);
+				}
+			}
+
+			// return widgets.OrderByDescending(x => x.GetIndex() ).ToList();
+			return widgets;
+		}
 
 		private int GetMaxWidgetsAmountInViewPort()
 		{
@@ -202,6 +230,6 @@ namespace Code
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;
 		}
-
+		
 	}
 }

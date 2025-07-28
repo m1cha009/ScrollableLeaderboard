@@ -34,7 +34,7 @@ namespace Code
 
 		private void StartScrollAnimation()
 		{
-			var newPlayerPosition = _infinityScrollController.GetPlayerContentPosition();
+			var newPlayerPosition = _infinityScrollController.GetNewPlayerContentPosition();
 
 			_content.DOAnchorPosY(newPlayerPosition, _scrollAnimDuration).SetEase(Ease.InOutSine);
 		}
@@ -44,10 +44,23 @@ namespace Code
 			if (_infinityScrollController.TryGetLastPlayerWidget(out Widget lastPlayerWidget))
 			{
 				lastPlayerWidget.transform.DOScaleY(0, _shrinkAnimDuration).SetEase(Ease.InOutSine);
+				StartMoveToCurrentPlayerAnimation();
 			}
 			else
 			{
 				Debug.LogError("Last player widgets can't be get");
+			}
+		}
+
+		private void StartMoveToCurrentPlayerAnimation()
+		{
+			var widgets = _infinityScrollController.GetBelowPlayerWidgets();
+			var lastPlayerPosition = _infinityScrollController.GetLastPlayerContentPosition();
+
+			for (var index = 0; index < widgets.Count; index++)
+			{
+				Widget widget = widgets[index];
+				widget.Rect.DOAnchorPosY(lastPlayerPosition - (index * widget.GetHeight()), 5f);
 			}
 		}
 	}
