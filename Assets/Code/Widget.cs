@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
@@ -12,6 +11,10 @@ namespace Code
 		private RectTransform _rectT;
 
 		private int _index;
+		
+		public bool IsNewPlayer { get; private set; }
+		
+		public bool IsLastPlayer { get; private set; }
 
 		private void Awake()
 		{
@@ -35,6 +38,16 @@ namespace Code
 			_rectT.pivot = new Vector2(0.5f, 1f);
 			
 			_rectT.anchoredPosition = newPosition;
+		}
+
+		public void SetIsLastPlayer(bool isLastPlayer = false)
+		{
+			IsLastPlayer = isLastPlayer;
+		}
+		
+		public void SetIsNewPlayer(bool isNewPlayer = false)
+		{
+			IsNewPlayer = isNewPlayer;
 		}
 		
 		public Vector2 GetPosition() => _rectT.anchoredPosition;

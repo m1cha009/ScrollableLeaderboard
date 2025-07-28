@@ -11,19 +11,20 @@ namespace Code
 		[SF] private RectTransform _contentRect;
 		[SF] private float _spacing;
 		
-		[SF] private int _lastPlayerIndex;
-		[SF] private int _newPlayerIndex;
+		[SF] private int _lastPlayerRank;
+		[SF] private int _newPlayerRank;
 
 		[SF] private int _totalPlayers;
 
-		private int _previousPlayerIndex;
+		private int _previousPlayerRank;
 		private float _widgetHeight;
-		private List<Widget> _widgets = new();
 		
 		private int _firstWidgetIndex;
 		private int _lastWidgetIndex;
 		
 		private Vector2 _previousContentPosition = Vector2.zero;
+		
+		private readonly List<Widget> _widgets = new();
 
 		private void Start()
 		{
@@ -32,11 +33,11 @@ namespace Code
 
 		private void Update()
 		{
-			if (_lastPlayerIndex != _previousPlayerIndex)
+			if (_lastPlayerRank != _previousPlayerRank)
 			{
-				Setup(_lastPlayerIndex);
+				Setup(_lastPlayerRank, _newPlayerRank);
 				
-				_previousPlayerIndex = _lastPlayerIndex;
+				_previousPlayerRank = _lastPlayerRank;
 				
 				_previousContentPosition = _contentRect.anchoredPosition;
 			}
@@ -57,13 +58,13 @@ namespace Code
 			_widgets.Clear();
 		}
 
-		private void Setup(int currentPlayerIndex)
+		private void Setup(int lastPlayerRank, int newPlayerRank)
 		{
 			CleanWidgets();
 			
 			var widgetsAmount = GetMaxWidgetsAmountInViewPort();
 			
-			SpawnWidgets(currentPlayerIndex, widgetsAmount);
+			SpawnWidgets(lastPlayerRank, newPlayerRank, widgetsAmount);
 			
 			SetupContentSize();
 
@@ -73,7 +74,7 @@ namespace Code
 
 		public float GetPlayerContentPosition()
 		{
-			var currentWidgetPosition = _newPlayerIndex * (_widgetHeight + _spacing);
+			var currentWidgetPosition = _newPlayerRank * (_widgetHeight + _spacing);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
 			var widgetHalfHeight = _widgetHeight * 0.5f;
 			
@@ -82,6 +83,21 @@ namespace Code
 			return contentPosition;
 		}
 		
+		public bool TryGetLastPlayerWidget(out Widget outWidget)
+		{
+			foreach (Widget widget in _widgets)
+			{
+				if (widget.IsLastPlayer)
+				{
+					outWidget = widget;
+					return true;
+				}
+			}
+			
+			outWidget = null;
+			return false;
+		} 
+
 		private int GetMaxWidgetsAmountInViewPort()
 		{
 			_widgetHeight = _widgetPrefab.GetComponent<RectTransform>().rect.height;
@@ -91,35 +107,29 @@ namespace Code
 			return widgetCount;
 		}
 		
-		private void SpawnWidgets(int currentPlayerIndex, int widgetsAmount)
+		private void SpawnWidgets(int lastPlayerRank, int newPlayerRank, int widgetsAmount)
 		{
 			var extraWidget = 2;
 			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
-			var startIndex = currentPlayerIndex - halfAmount - extraWidget;
-			var endIndex = currentPlayerIndex + halfAmount + extraWidget + 1; 
-			
-			Debug.Log($"Current Player Index: {currentPlayerIndex} Start: {startIndex}, End: {endIndex}, Amount: {widgetsAmount}");
+			var startIndex = lastPlayerRank - halfAmount - extraWidget;
+			var endIndex = lastPlayerRank + halfAmount + extraWidget + 1;
+
+			Debug.Log($"Current Player Index: {lastPlayerRank} Start: {startIndex}, End: {endIndex}, Amount: {widgetsAmount}");
 			
 			for (int i = startIndex; i < endIndex; i++)
 			{
-				var widget = SpawnWidget(i);
-				
+				var widget = Instantiate(_widgetPrefab, _contentRect);
+				widget.SetName(i);
 				widget.SetPosition(new Vector2(0, -i * (_widgetHeight + _spacing)));
+				widget.SetIsLastPlayer(i == lastPlayerRank);
+				widget.SetIsNewPlayer(i == newPlayerRank);
 				
 				_widgets.Add(widget);
 			}
 			
 			_firstWidgetIndex = 0;
 			_lastWidgetIndex = _widgets.Count - 1;
-		}
-
-		private Widget SpawnWidget(int index)
-		{
-			var widget = Instantiate(_widgetPrefab, _contentRect);
-			widget.SetName(index);
-
-			return widget;
 		}
 
 		private void SetupContentSize()
@@ -130,7 +140,7 @@ namespace Code
 
 		private void AlignContentCurrentPlayerWithViewPort()
 		{
-			var currentWidgetPosition = _lastPlayerIndex * (_widgetHeight + _spacing);
+			var currentWidgetPosition = _lastPlayerRank * (_widgetHeight + _spacing);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
 			var widgetHalfHeight = _widgetHeight * 0.5f;
 
@@ -170,6 +180,8 @@ namespace Code
 			
 			firstWidget.SetPosition(new Vector2(0, newPosition));
 			firstWidget.SetName(lastWidget.GetIndex() + 1);
+			firstWidget.SetIsNewPlayer(lastWidget.IsNewPlayer);
+			firstWidget.SetIsLastPlayer(lastWidget.IsLastPlayer);
 			
 			_lastWidgetIndex = _firstWidgetIndex;
 			_firstWidgetIndex = (_firstWidgetIndex + 1) % _widgets.Count;
@@ -184,6 +196,8 @@ namespace Code
 			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
 			lastWidget.SetName(firstWidget.GetIndex() - 1);
+			lastWidget.SetIsNewPlayer(firstWidget.IsNewPlayer);
+			lastWidget.SetIsLastPlayer(firstWidget.IsLastPlayer);
 			
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;
