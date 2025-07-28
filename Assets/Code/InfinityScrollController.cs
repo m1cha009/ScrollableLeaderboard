@@ -93,7 +93,7 @@ namespace Code
 		
 		private void SpawnWidgets(int currentPlayerIndex, int widgetsAmount)
 		{
-			var extraWidget = 1;
+			var extraWidget = 2;
 			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
 			var startIndex = currentPlayerIndex - halfAmount - extraWidget;
@@ -143,8 +143,8 @@ namespace Code
 		{
 			var currentContentPosition = _contentRect.anchoredPosition;
 
-			var upperThreshold = _previousContentPosition.y + _widgetHeight;
-			var lowerThreshold = _previousContentPosition.y - _widgetHeight;
+			var upperThreshold = _previousContentPosition.y + _widgetHeight + _spacing;
+			var lowerThreshold = _previousContentPosition.y - _widgetHeight - _spacing;
 			
 			if (_contentRect.anchoredPosition.y > upperThreshold)
 			{
@@ -155,6 +155,8 @@ namespace Code
 			
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
+				Debug.Log($"Moved widget. {lowerThreshold}, Content pos: {_contentRect.anchoredPosition.y}");
+				
 				MoveWidgetToTop();
 				
 				return true;
