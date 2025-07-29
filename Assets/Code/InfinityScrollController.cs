@@ -39,7 +39,7 @@ namespace Code
 		{
 			if (_lastPlayerRank != _previousPlayerRank)
 			{
-				Setup(_lastPlayerRank, _newPlayerRank);
+				Setup(_lastPlayerRank);
 				
 				_previousPlayerRank = _lastPlayerRank;
 				
@@ -62,17 +62,17 @@ namespace Code
 			_widgets.Clear();
 		}
 
-		private void Setup(int lastPlayerRank, int newPlayerRank)
+		private void Setup(int lastPlayerRank)
 		{
 			CleanWidgets();
 			
 			var widgetsAmount = GetMaxWidgetsAmountInViewPort();
 			
-			SpawnWidgets(lastPlayerRank, newPlayerRank, widgetsAmount);
+			SpawnWidgets(lastPlayerRank, widgetsAmount);
 			
 			SetupContentSize();
 
-			AlignContentCurrentPlayerWithViewPort();
+			AlignLastPlayerWithViewPort();
 
 		}
 
@@ -165,15 +165,15 @@ namespace Code
 			return widgetCount;
 		}
 		
-		private void SpawnWidgets(int lastPlayerRank, int newPlayerRank, int widgetsAmount)
+		private void SpawnWidgets(int previousPlayerRank, int widgetsAmount)
 		{
 			var extraWidget = 2;
 			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
-			var startIndex = lastPlayerRank - halfAmount - extraWidget;
-			var endIndex = lastPlayerRank + halfAmount + extraWidget + 1;
+			var startIndex = previousPlayerRank - halfAmount - extraWidget;
+			var endIndex = previousPlayerRank + halfAmount + extraWidget + 1;
 
-			Debug.Log($"Current Player Index: {lastPlayerRank} Start: {startIndex}, End: {endIndex}, Amount: {widgetsAmount}");
+			Debug.Log($"Previous player rank: {previousPlayerRank} Start: {startIndex}, End: {endIndex}, Visible Widgets amount: {widgetsAmount}");
 			
 			for (int i = startIndex; i < endIndex; i++)
 			{
@@ -194,7 +194,7 @@ namespace Code
 			_contentRect.sizeDelta = new Vector2(_contentRect.sizeDelta.x, totalHeight);
 		}
 
-		private void AlignContentCurrentPlayerWithViewPort()
+		private void AlignLastPlayerWithViewPort()
 		{
 			var currentWidgetPosition = _lastPlayerRank * (_widgetHeight + _spacing);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
@@ -220,11 +220,22 @@ namespace Code
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
 				MoveWidgetToTop();
+
+				// UpdateWidgetData();
 				
 				return true;
 			}
 
 			return false;
+		}
+
+		private void UpdateWidgetData()
+		{
+			// Widget middleWidget = _widgets[_middleWidgetIndex];
+			//
+			// middleWidget.Setup(middleWidget.GetRank() + 1);
+			//
+			// Debug.Log($"Update middle widget");
 		}
 
 		private void MoveWidgetToBottom()

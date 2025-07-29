@@ -2431,9 +2431,9 @@ MonoBehaviour:
   _viewPort: {fileID: 1148997085}
   _contentRect: {fileID: 1628970367}
   _spacing: 0
-  _lastPlayerRank: 12
-  _newPlayerRank: 10
-  _totalPlayers: 15
+  _lastPlayerRank: 7
+  _newPlayerRank: 1
+  _totalPlayers: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
