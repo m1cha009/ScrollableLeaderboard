@@ -84,7 +84,7 @@ namespace Code
 			
 			lastWidget.transform.DOScaleY(1, _expandAnimDuration).SetEase(Ease.InOutSine);
 
-			StartTranslateWidgetsAnimation(newPlayerRank, false);
+			StartTranslateWidgetsAnimation(newPlayerRank - 1, false);
 		}
 		
 		private void StartTranslateWidgetsAnimation(int playerRank, bool isMoveUp)
