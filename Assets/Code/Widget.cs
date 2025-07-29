@@ -8,14 +8,10 @@ namespace Code
 	{
 		[SF] private TMP_Text text;
 
-		private int _index;
+		private int _rank;
 		
 		public RectTransform Rect { get; set; }
 		
-		public bool IsNewPlayer { get; private set; }
-		
-		public bool IsLastPlayer { get; private set; }
-
 		private void Awake()
 		{
 			Rect = transform as RectTransform;
@@ -26,10 +22,10 @@ namespace Code
 			gameObject.name = $"{value}";
 			text.SetText($"{value}");
 
-			_index = value;
+			_rank = value;
 		}
 
-		public int GetIndex() => _index;
+		public int GetRank() => _rank;
 
 		public void SetPosition(Vector2 newPosition)
 		{
@@ -38,16 +34,6 @@ namespace Code
 			Rect.pivot = new Vector2(0.5f, 1f);
 			
 			Rect.anchoredPosition = newPosition;
-		}
-
-		public void SetIsLastPlayer(bool isLastPlayer = false)
-		{
-			IsLastPlayer = isLastPlayer;
-		}
-		
-		public void SetIsNewPlayer(bool isNewPlayer = false)
-		{
-			IsNewPlayer = isNewPlayer;
 		}
 		
 		public Vector2 GetPosition() => Rect.anchoredPosition;
