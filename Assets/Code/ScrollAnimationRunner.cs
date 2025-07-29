@@ -56,7 +56,7 @@ namespace Code
 						RemoveLastPlayerWidget(lastPlayerWidget);
 					});
 				
-				StartTranslateWidgetsToTopAnimation();
+				StartTranslateWidgetsAnimation(lastPlayerRank, true);
 			}
 			else
 			{
@@ -68,20 +68,6 @@ namespace Code
 		{
 			_infinityScrollController.RemoveWidget(lastPlayerWidget);
 		}
-		
-		private void StartTranslateWidgetsToTopAnimation()
-		{
-			var widgets = _infinityScrollController.GetBelowPlayerWidgets();
-			
-			var lastPlayerRank = _infinityScrollController.LastPlayerRank;
-			var lastPlayerPosition = _infinityScrollController.GetPlayerPosition(lastPlayerRank);
-
-			for (var index = 0; index < widgets.Count; index++)
-			{
-				Widget widget = widgets[index];
-				widget.Rect.DOAnchorPosY(-lastPlayerPosition - (index * widget.GetHeight()), 2.5f);
-			}
-		}
 
 
 		private void StartExpandWidgetAnimation()
@@ -90,23 +76,32 @@ namespace Code
 			
 			var newPlayerPosition = _infinityScrollController.GetPlayerPosition(newPlayerRank);
 			
-			if (_infinityScrollController.TryGetPlayerWidget(newPlayerRank, out Widget newPlayerWidget))
-			{
-				Debug.Log($"New player widget found");
-				
-				newPlayerWidget.transform.DOScale(Vector3.one * 2, _expandAnimDuration).SetEase(Ease.InOutSine);
-			}
-			else
-			{
-				Debug.LogError($"New player not found in the current list");
-			}
+			var lastWidget = _infinityScrollController.GetLastWidget();
+			lastWidget.Setup(newPlayerRank);
+			lastWidget.SetScaleY(0);
+			lastWidget.SetPosition(new Vector2(100, -newPlayerPosition));
 			
-			// start expanding it
+			lastWidget.transform.DOScaleY(1, _expandAnimDuration).SetEase(Ease.InOutSine);
+
+			StartTranslateWidgetsAnimation(newPlayerRank, false);
 		}
 		
-		private void StartTranslateWidgetsToBottomAnimation()
+		private void StartTranslateWidgetsAnimation(int playerRank, bool isMoveUp)
 		{
-			// move widgets below provided index
+			var widgets = _infinityScrollController.GetPlayerWidgetsBelowCurrentRank(playerRank);
+
+			foreach (var widget in widgets)
+			{
+				if (isMoveUp)
+				{
+					widget.Rect.DOAnchorPosY( widget.GetPosition().y + widget.GetHeight(), 2.5f);
+				}
+				else
+				{
+					widget.Rect.DOAnchorPosY( widget.GetPosition().y - widget.GetHeight(), 2.5f);
+				}
+				
+			}
 		}
 		
 	}
