@@ -14,7 +14,7 @@ namespace Code
 			for (int i = 0; i < _widgetsAmount; i++)
 			{
 				var widget = Instantiate(_widgetPrefab, _content);
-				widget.SetName(i);
+				widget.Setup(i);
 			}
 		}
 	}

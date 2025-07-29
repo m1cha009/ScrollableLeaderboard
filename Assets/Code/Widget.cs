@@ -17,15 +17,12 @@ namespace Code
 			Rect = transform as RectTransform;
 		}
 
-		public void SetName(int value)
+		public void Setup(int rank)
 		{
-			gameObject.name = $"{value}";
-			text.SetText($"{value}");
+			SetName($"{rank}");
 
-			_rank = value;
+			_rank = rank;
 		}
-
-		public int GetRank() => _rank;
 
 		public void SetPosition(Vector2 newPosition)
 		{
@@ -35,9 +32,20 @@ namespace Code
 			
 			Rect.anchoredPosition = newPosition;
 		}
+
+		public void SetScaleY(float value)
+		{
+			Rect.localScale = new Vector3(1, value, 1);
+		}
 		
+		public int GetRank() => _rank;
 		public Vector2 GetPosition() => Rect.anchoredPosition;
-		
 		public float GetHeight() => Rect.rect.height;
+
+		private void SetName(string name)
+		{
+			gameObject.name = name;
+			text.SetText(name);
+		}
 	}
 }

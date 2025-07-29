@@ -91,6 +91,8 @@ namespace Code
 		{
 			return playerRank * (_widgetHeight + _spacing);
 		}
+
+		public Widget GetLastWidget() => _widgets[^1];
 		
 		public bool TryGetPlayerWidget(int playerRank, out Widget outWidget)
 		{
@@ -107,13 +109,13 @@ namespace Code
 			return false;
 		}
 
-		public List<Widget> GetBelowPlayerWidgets()
+		public List<Widget> GetPlayerWidgetsBelowCurrentRank(int playerRank)
 		{
 			var widgets = new List<Widget>();
 			
 			foreach (Widget widget in _widgets)
 			{
-				if (widget.GetRank() > _lastPlayerRank)
+				if (widget.GetRank() > playerRank)
 				{
 					widgets.Add(widget);
 				}
@@ -160,7 +162,7 @@ namespace Code
 			for (int i = startIndex; i < endIndex; i++)
 			{
 				var widget = Instantiate(_widgetPrefab, _contentRect);
-				widget.SetName(i);
+				widget.Setup(i);
 				widget.SetPosition(new Vector2(0, -i * (_widgetHeight + _spacing)));
 				
 				_widgets.Add(widget);
@@ -217,7 +219,7 @@ namespace Code
 			var newPosition = lastWidget.GetPosition().y + -lastWidget.GetHeight() + _spacing;
 			
 			firstWidget.SetPosition(new Vector2(0, newPosition));
-			firstWidget.SetName(lastWidget.GetRank() + 1);
+			firstWidget.Setup(lastWidget.GetRank() + 1);
 			
 			_lastWidgetIndex = _firstWidgetIndex;
 			_firstWidgetIndex = (_firstWidgetIndex + 1) % _widgets.Count;
@@ -231,7 +233,7 @@ namespace Code
 			var newPosition = firstWidget.GetPosition().y + firstWidget.GetHeight() + _spacing;
 			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
-			lastWidget.SetName(firstWidget.GetRank() - 1);
+			lastWidget.Setup(firstWidget.GetRank() - 1);
 			
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;

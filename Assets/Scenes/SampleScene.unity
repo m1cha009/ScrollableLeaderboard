@@ -820,7 +820,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 536, y: -267}
+  m_AnchoredPosition: {x: 396, y: 262}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &760941709
@@ -1780,7 +1780,7 @@ MonoBehaviour:
   _expandAnimButton: {fileID: 1552227333}
   _content: {fileID: 1628970367}
   _infinityScrollController: {fileID: 1930090660}
-  _scrollAnimDuration: 10
+  _scrollAnimDuration: 2
   _shrinkAnimDuration: 2
   _expandAnimDuration: 2
 --- !u!1 &1466793606
@@ -1881,7 +1881,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 536, y: -437}
+  m_AnchoredPosition: {x: 401, y: -156}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1552227333
@@ -2002,7 +2002,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 368, y: -273}
+  m_AnchoredPosition: {x: 417, y: 52}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1607197455
@@ -2403,8 +2403,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1148997085}
-  - {fileID: 1607197454}
   - {fileID: 760941707}
+  - {fileID: 1607197454}
   - {fileID: 1552227332}
   - {fileID: 1266240687}
   m_Father: {fileID: 93082863}
@@ -2430,9 +2430,9 @@ MonoBehaviour:
   _viewPort: {fileID: 1148997085}
   _contentRect: {fileID: 1628970367}
   _spacing: 0
-  _lastPlayerRank: 80
-  _newPlayerRank: 50
-  _totalPlayers: 100
+  _lastPlayerRank: 17
+  _newPlayerRank: 5
+  _totalPlayers: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
