@@ -92,8 +92,24 @@ namespace Code
 			return playerRank * (_widgetHeight + _spacing);
 		}
 
-		public Widget GetLastWidget() => _widgets[^1];
-		
+		public Widget GetFirstInactiveWidget()
+		{
+			var lowestRank = _widgets[0].GetRank();
+			var lowestIndex = 0;
+
+			for (var index = 0; index < _widgets.Count; index++)
+			{
+				Widget widget = _widgets[index];
+				if (widget.GetRank() < lowestRank)
+				{
+					lowestRank = widget.GetRank();
+					lowestIndex = index;
+				}
+			}
+			
+			return _widgets[lowestIndex];
+		}
+
 		public bool TryGetPlayerWidget(int playerRank, out Widget outWidget)
 		{
 			foreach (Widget widget in _widgets)

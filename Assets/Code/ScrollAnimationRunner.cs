@@ -77,14 +77,16 @@ namespace Code
 			
 			var newPlayerPosition = _infinityScrollController.GetPlayerPosition(newPlayerRank);
 			
-			var lastWidget = _infinityScrollController.GetLastWidget();
-			lastWidget.Setup(newPlayerRank);
-			lastWidget.SetScaleY(0);
-			lastWidget.SetPosition(new Vector2(100, -newPlayerPosition));
+			var widget = _infinityScrollController.GetFirstInactiveWidget();
+			widget.Setup(newPlayerRank);
+			widget.SetScaleY(0);
+			widget.SetPosition(new Vector2(0, -newPlayerPosition));
 			
-			lastWidget.transform.DOScaleY(1, _expandAnimDuration).SetEase(Ease.InOutSine);
+			widget.transform.DOScaleY(1, _expandAnimDuration).SetEase(Ease.InOutSine);
+			
+			// Change below players rank
 
-			StartTranslateWidgetsAnimation(newPlayerRank - 1, false);
+			StartTranslateWidgetsAnimation(newPlayerRank, false);
 		}
 		
 		private void StartTranslateWidgetsAnimation(int playerRank, bool isMoveUp)
