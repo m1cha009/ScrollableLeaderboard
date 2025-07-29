@@ -19,6 +19,7 @@ namespace Code
 		[SF] private float _scrollAnimDuration;
 		[SF] private float _shrinkAnimDuration;
 		[SF] private float _expandAnimDuration;
+		[SF] private float _translateAnimDuration;
 
 
 		private void OnEnable()
@@ -94,11 +95,11 @@ namespace Code
 			{
 				if (isMoveUp)
 				{
-					widget.Rect.DOAnchorPosY( widget.GetPosition().y + widget.GetHeight(), 2.5f);
+					widget.Rect.DOAnchorPosY( widget.GetPosition().y + widget.GetHeight(), _translateAnimDuration);
 				}
 				else
 				{
-					widget.Rect.DOAnchorPosY( widget.GetPosition().y - widget.GetHeight(), 2.5f);
+					widget.Rect.DOAnchorPosY( widget.GetPosition().y - widget.GetHeight(), _translateAnimDuration);
 				}
 				
 			}

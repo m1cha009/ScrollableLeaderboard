@@ -1783,6 +1783,7 @@ MonoBehaviour:
   _scrollAnimDuration: 2
   _shrinkAnimDuration: 2
   _expandAnimDuration: 2
+  _translateAnimDuration: 2.5
 --- !u!1 &1466793606
 GameObject:
   m_ObjectHideFlags: 0
