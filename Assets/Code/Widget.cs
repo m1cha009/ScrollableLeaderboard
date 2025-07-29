@@ -10,7 +10,7 @@ namespace Code
 
 		private int _rank;
 		
-		public RectTransform Rect { get; set; }
+		public RectTransform Rect { get; private set; }
 		
 		private void Awake()
 		{
@@ -35,11 +35,13 @@ namespace Code
 
 		public void SetScaleY(float value)
 		{
-			Rect.localScale = new Vector3(1, value, 1);
+			Rect.localScale = new Vector3(Rect.localScale.x, value, Rect.localScale.z);
 		}
 		
 		public int GetRank() => _rank;
+		
 		public Vector2 GetPosition() => Rect.anchoredPosition;
+		
 		public float GetHeight() => Rect.rect.height;
 
 		private void SetName(string name)
