@@ -170,8 +170,6 @@ namespace Code
 			var startIndex = previousPlayerRank - halfAmount - extraWidget;
 			var endIndex = previousPlayerRank + halfAmount + extraWidget + 1;
 
-			Debug.Log($"Previous player rank: {previousPlayerRank} Start: {startIndex}, End: {endIndex}, Visible Widgets amount: {widgetsAmount}");
-			
 			for (int i = startIndex; i < endIndex; i++)
 			{
 				var widget = Instantiate(_widgetPrefab, _contentRect);
@@ -219,8 +217,9 @@ namespace Code
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
 				MoveWidgetToTop();
-				
-				_previousContentPosition.y = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
+
+				var positionY = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
+				_previousContentPosition = new Vector2(0, positionY);
 
 				return true;
 			}
