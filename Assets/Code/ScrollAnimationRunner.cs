@@ -43,7 +43,13 @@ namespace Code
 		{
 			if (_infinityScrollController.TryGetLastPlayerWidget(out Widget lastPlayerWidget))
 			{
-				lastPlayerWidget.transform.DOScaleY(0, _shrinkAnimDuration).SetEase(Ease.InOutSine);
+				lastPlayerWidget.transform
+					.DOScaleY(0, _shrinkAnimDuration)
+					.SetEase(Ease.InOutSine).OnComplete(() =>
+					{
+						RemoveLastPlayerWidget(lastPlayerWidget);
+					});
+				
 				StartMoveToCurrentPlayerAnimation();
 			}
 			else
@@ -52,15 +58,20 @@ namespace Code
 			}
 		}
 
+		private void RemoveLastPlayerWidget(Widget lastPlayerWidget)
+		{
+			_infinityScrollController.RemoveWidget(lastPlayerWidget);
+		}
+
 		private void StartMoveToCurrentPlayerAnimation()
 		{
 			var widgets = _infinityScrollController.GetBelowPlayerWidgets();
-			var lastPlayerPosition = _infinityScrollController.GetLastPlayerContentPosition();
+			var lastPlayerPosition = _infinityScrollController.GetLastPlayerPosition();
 
 			for (var index = 0; index < widgets.Count; index++)
 			{
 				Widget widget = widgets[index];
-				widget.Rect.DOAnchorPosY(-lastPlayerPosition - (index * widget.GetHeight()), 2f);
+				widget.Rect.DOAnchorPosY(-lastPlayerPosition - (index * widget.GetHeight()), 2.5f);
 			}
 		}
 	}

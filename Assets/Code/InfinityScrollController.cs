@@ -84,14 +84,9 @@ namespace Code
 			return contentPosition;
 		}
 
-		public float GetLastPlayerContentPosition()
+		public float GetLastPlayerPosition()
 		{
 			var currentWidgetPosition = _lastPlayerRank * (_widgetHeight + _spacing);
-			// var viewPortCenter = _viewPort.rect.height * 0.5f;
-			// var widgetHalfHeight = _widgetHeight * 0.5f;
-			//
-			// var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
-
 			return currentWidgetPosition;
 		}
 		
@@ -122,8 +117,23 @@ namespace Code
 				}
 			}
 
-			// return widgets.OrderByDescending(x => x.GetIndex() ).ToList();
 			return widgets;
+		}
+
+		public void RemoveWidget(Widget playerWidget)
+		{
+			foreach (var widget in _widgets)
+			{
+				if (widget == playerWidget)
+				{
+					Destroy(widget.gameObject);
+					_widgets.Remove(widget);
+
+					_lastWidgetIndex--;
+					
+					return;
+				}
+			}
 		}
 
 		private int GetMaxWidgetsAmountInViewPort()
