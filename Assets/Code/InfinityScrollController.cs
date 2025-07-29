@@ -45,7 +45,7 @@ namespace Code
 				
 				_previousContentPosition = _contentRect.anchoredPosition;
 			}
-
+			
 			if (IsContentNeedUpdate())
 			{
 				_previousContentPosition = _contentRect.anchoredPosition;
@@ -221,21 +221,12 @@ namespace Code
 			{
 				MoveWidgetToTop();
 
-				// UpdateWidgetData();
+				_previousContentPosition = _contentRect.anchoredPosition;
 				
 				return true;
 			}
 
 			return false;
-		}
-
-		private void UpdateWidgetData()
-		{
-			// Widget middleWidget = _widgets[_middleWidgetIndex];
-			//
-			// middleWidget.Setup(middleWidget.GetRank() + 1);
-			//
-			// Debug.Log($"Update middle widget");
 		}
 
 		private void MoveWidgetToBottom()
@@ -255,12 +246,15 @@ namespace Code
 		private void MoveWidgetToTop()
 		{
 			var firstWidget = _widgets[_firstWidgetIndex];
+			firstWidget.SetTag();
+			
 			var lastWidget = _widgets[_lastWidgetIndex];
 			
 			var newPosition = firstWidget.GetPosition().y + firstWidget.GetHeight() + _spacing;
 			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
 			lastWidget.Setup(firstWidget.GetRank() - 1);
+			lastWidget.SetTag("Last");
 			
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;

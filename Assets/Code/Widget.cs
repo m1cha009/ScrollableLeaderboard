@@ -49,5 +49,18 @@ namespace Code
 			gameObject.name = name;
 			text.SetText(name);
 		}
+
+		public void SetTag(string tag = "")
+		{
+			if (string.IsNullOrEmpty(tag))
+			{
+				SetName($"{_rank}");
+			}
+			else
+			{
+				gameObject.name = $"{gameObject.name} {tag}";
+				text.SetText($"{text.text} {tag}");
+			}
+		}
 	}
 }
