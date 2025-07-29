@@ -45,11 +45,8 @@ namespace Code
 				
 				_previousContentPosition = _contentRect.anchoredPosition;
 			}
-			
-			if (IsContentNeedUpdate())
-			{
-				_previousContentPosition = _contentRect.anchoredPosition;
-			}
+
+			UpdateWidgetsPosition();
 		}
 
 		private void CleanWidgets()
@@ -167,7 +164,7 @@ namespace Code
 		
 		private void SpawnWidgets(int previousPlayerRank, int widgetsAmount)
 		{
-			var extraWidget = 2;
+			var extraWidget = 1;
 			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
 			var startIndex = previousPlayerRank - halfAmount - extraWidget;
@@ -205,7 +202,7 @@ namespace Code
 			_contentRect.anchoredPosition = new Vector2(_contentRect.anchoredPosition.x, contentPosition);
 		}
 
-		private bool IsContentNeedUpdate()
+		private bool UpdateWidgetsPosition()
 		{
 			var upperThreshold = _previousContentPosition.y + _widgetHeight + _spacing;
 			var lowerThreshold = _previousContentPosition.y - _widgetHeight - _spacing;
@@ -213,6 +210,8 @@ namespace Code
 			if (_contentRect.anchoredPosition.y > upperThreshold)
 			{
 				MoveWidgetToBottom();
+				
+				_previousContentPosition.y = upperThreshold;
 
 				return true;
 			}
@@ -220,9 +219,9 @@ namespace Code
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
 				MoveWidgetToTop();
-
-				_previousContentPosition = _contentRect.anchoredPosition;
 				
+				_previousContentPosition.y = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
+
 				return true;
 			}
 
@@ -250,7 +249,7 @@ namespace Code
 			
 			var lastWidget = _widgets[_lastWidgetIndex];
 			
-			var newPosition = firstWidget.GetPosition().y + firstWidget.GetHeight() + _spacing;
+			var newPosition = firstWidget.GetPosition().y + lastWidget.GetHeight() + _spacing;
 			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
 			lastWidget.Setup(firstWidget.GetRank() - 1);
