@@ -103,7 +103,7 @@ namespace Code
 			
 			var newPlayerPosition = _infinityScrollController.GetPlayerPosition(newPlayerRank);
 			
-			var widget = _infinityScrollController.GetFirstInactiveWidget();
+			var widget = _infinityScrollController.GetInactiveWidget();
 			widget.Setup(newPlayerRank);
 			widget.SetScaleY(0);
 			widget.SetPosition(new Vector2(0, -newPlayerPosition));

@@ -25,6 +25,8 @@ namespace Code
 		private int _firstWidgetIndex;
 		private int _lastWidgetIndex;
 		
+		private int _extraWidget = 2;
+		
 		private Vector2 _previousContentPosition = Vector2.zero;
 		
 		private readonly List<Widget> _widgets = new();
@@ -99,22 +101,16 @@ namespace Code
 			return playerRank * (_widgetHeight + _spacing);
 		}
 
-		public Widget GetFirstInactiveWidget()
+		public Widget GetInactiveWidget()
 		{
-			var lowestRank = _widgets[0].GetRank();
-			var lowestIndex = 0;
+			var firstInactiveWidgetFromBottom = _centerPlayerRank + _extraWidget;
 
-			for (var index = 0; index < _widgets.Count; index++)
+			if (TryGetPlayerWidget(firstInactiveWidgetFromBottom, out Widget inactiveWidget))
 			{
-				Widget widget = _widgets[index];
-				if (widget.GetRank() < lowestRank)
-				{
-					lowestRank = widget.GetRank();
-					lowestIndex = index;
-				}
+				return inactiveWidget;
 			}
-			
-			return _widgets[lowestIndex];
+
+			return null;
 		}
 
 		public bool TryGetPlayerWidget(int playerRank, out Widget outWidget)
@@ -169,11 +165,9 @@ namespace Code
 		
 		private void SpawnWidgets(int previousPlayerRank, int widgetsAmount)
 		{
-			var extraWidget = 2;
-			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
-			var startIndex = previousPlayerRank - halfAmount - extraWidget;
-			var endIndex = previousPlayerRank + halfAmount + extraWidget + 1;
+			var startIndex = previousPlayerRank - halfAmount - _extraWidget;
+			var endIndex = previousPlayerRank + halfAmount + _extraWidget + 1;
 
 			for (int i = startIndex; i < endIndex; i++)
 			{
