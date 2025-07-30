@@ -7,6 +7,7 @@ namespace Code
 	public class InfinityScrollController : MonoBehaviour
 	{
 		[SF] private Widget _widgetPrefab;
+		[SF] private Widget _currentPlayerWidget;
 		[SF] private RectTransform _viewPort;
 		[SF] private RectTransform _contentRect;
 		[SF] private float _spacing;
@@ -27,7 +28,7 @@ namespace Code
 		private Vector2 _previousContentPosition = Vector2.zero;
 		
 		private readonly List<Widget> _widgets = new();
-		private Dictionary<int, Widget> _widgetsByRankDict = new();
+		private readonly Dictionary<int, Widget> _widgetsByRankDict = new();
 
 		public int LastPlayerRank => _lastPlayerRank;
 		public int NewPlayerRank => _newPlayerRank;
@@ -69,6 +70,8 @@ namespace Code
 			var widgetsAmount = GetMaxWidgetsAmountInViewPort();
 			
 			SpawnWidgets(lastPlayerRank, widgetsAmount);
+
+			SpawnCurrentPlayerWidget(lastPlayerRank);
 			
 			SetupContentSize();
 
@@ -80,7 +83,7 @@ namespace Code
 
 		}
 
-		public float GetPlayerYCenterPosition(int playerRank)
+		public float GetPlayerYCenterPositionInViewPort(int playerRank)
 		{
 			var currentWidgetPosition = GetPlayerPosition(playerRank);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
@@ -183,6 +186,11 @@ namespace Code
 			}
 		}
 
+		private void SpawnCurrentPlayerWidget(int playerRank)
+		{
+			_currentPlayerWidget.Setup(playerRank);
+		}
+
 		private void SetupContentSize()
 		{
 			var totalHeight = _totalPlayers * (_widgetHeight + _spacing);
@@ -201,6 +209,7 @@ namespace Code
 				_centerPlayerRank++;
 				
 				UpdateWidgetData(_centerPlayerRank);
+				_currentPlayerWidget.UpdateRank(_centerPlayerRank);
 				
 				_previousContentPosition.y = upperThreshold;
 
@@ -210,10 +219,11 @@ namespace Code
 			if (_contentRect.anchoredPosition.y < lowerThreshold)
 			{
 				MoveWidgetToTop();
-
+				
 				_centerPlayerRank--;
 
 				UpdateWidgetData(_centerPlayerRank);
+				_currentPlayerWidget.UpdateRank(_centerPlayerRank);
 				
 				var positionY = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
 				_previousContentPosition = new Vector2(0, positionY);
@@ -265,7 +275,7 @@ namespace Code
 
 		private void CenterPlayerByRank(int playerRank)
 		{
-			var playerPosY = GetPlayerYCenterPosition(playerRank);
+			var playerPosY = GetPlayerYCenterPositionInViewPort(playerRank);
 			_contentRect.anchoredPosition = new Vector2(_contentRect.anchoredPosition.x, playerPosY);
 		}
 		

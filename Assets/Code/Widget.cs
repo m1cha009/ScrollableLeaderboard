@@ -37,6 +37,13 @@ namespace Code
 		{
 			Rect.localScale = new Vector3(Rect.localScale.x, value, Rect.localScale.z);
 		}
+
+		public void UpdateRank(int rank)
+		{
+			SetName($"{rank}");
+
+			_rank = rank;
+		}
 		
 		public int GetRank() => _rank;
 		
