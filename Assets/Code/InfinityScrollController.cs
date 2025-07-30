@@ -19,6 +19,8 @@ namespace Code
 
 		private int _previousPlayerRank;
 		private float _widgetHeight;
+
+		private int _centerPlayerRank;
 		
 		private int _firstWidgetIndex;
 		private int _lastWidgetIndex;
@@ -69,17 +71,21 @@ namespace Code
 			
 			SetupContentSize();
 
-			AlignLastPlayerWithViewPort();
+			CenterPlayerByRank(lastPlayerRank);
+			
+			_centerPlayerRank = LastPlayerRank;
+			_firstWidgetIndex = 0;
+			_lastWidgetIndex = _widgets.Count - 1;
 
 		}
 
-		public float GetPlayerCenterPosition()
+		public float GetPlayerYCenterPosition(int playerRank)
 		{
-			var currentWidgetPosition = GetPlayerPosition(_newPlayerRank);
+			var currentWidgetPosition = GetPlayerPosition(playerRank);
 			var viewPortCenter = _viewPort.rect.height * 0.5f;
 			var widgetHalfHeight = _widgetHeight * 0.5f;
 			
-			var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
+			var contentPosition =  currentWidgetPosition - viewPortCenter + widgetHalfHeight;
 
 			return contentPosition;
 		}
@@ -164,7 +170,7 @@ namespace Code
 		
 		private void SpawnWidgets(int previousPlayerRank, int widgetsAmount)
 		{
-			var extraWidget = 1;
+			var extraWidget = 2;
 			
 			var halfAmount = Mathf.FloorToInt(widgetsAmount / 2f);
 			var startIndex = previousPlayerRank - halfAmount - extraWidget;
@@ -178,26 +184,12 @@ namespace Code
 				
 				_widgets.Add(widget);
 			}
-			
-			_firstWidgetIndex = 0;
-			_lastWidgetIndex = _widgets.Count - 1;
 		}
 
 		private void SetupContentSize()
 		{
 			var totalHeight = _totalPlayers * (_widgetHeight + _spacing);
 			_contentRect.sizeDelta = new Vector2(_contentRect.sizeDelta.x, totalHeight);
-		}
-
-		private void AlignLastPlayerWithViewPort()
-		{
-			var currentWidgetPosition = _lastPlayerRank * (_widgetHeight + _spacing);
-			var viewPortCenter = _viewPort.rect.height * 0.5f;
-			var widgetHalfHeight = _widgetHeight * 0.5f;
-
-			var contentPosition = currentWidgetPosition - viewPortCenter + widgetHalfHeight;
-			
-			_contentRect.anchoredPosition = new Vector2(_contentRect.anchoredPosition.x, contentPosition);
 		}
 
 		private bool UpdateWidgetsPosition()
@@ -209,6 +201,8 @@ namespace Code
 			{
 				MoveWidgetToBottom();
 				
+				_centerPlayerRank++;
+				
 				_previousContentPosition.y = upperThreshold;
 
 				return true;
@@ -218,6 +212,8 @@ namespace Code
 			{
 				MoveWidgetToTop();
 
+				_centerPlayerRank--;
+				
 				var positionY = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
 				_previousContentPosition = new Vector2(0, positionY);
 
@@ -225,6 +221,15 @@ namespace Code
 			}
 
 			return false;
+		}
+
+		private void UpdateWidgetData(int centerPlayerRank)
+		{
+			// get widget by rank
+			if (TryGetPlayerWidget(centerPlayerRank, out var centerWidget))
+			{
+				
+			}
 		}
 
 		private void MoveWidgetToBottom()
@@ -256,6 +261,12 @@ namespace Code
 			
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;
+		}
+
+		private void CenterPlayerByRank(int playerRank)
+		{
+			var playerPosY = GetPlayerYCenterPosition(playerRank);
+			_contentRect.anchoredPosition = new Vector2(_contentRect.anchoredPosition.x, playerPosY);
 		}
 		
 	}

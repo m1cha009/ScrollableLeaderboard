@@ -39,7 +39,9 @@ namespace Code
 
 		private void StartScrollAnimation()
 		{
-			var newPlayerPosition = _infinityScrollController.GetPlayerCenterPosition();
+			var newPlayerRank = _infinityScrollController.NewPlayerRank;
+			
+			var newPlayerPosition = _infinityScrollController.GetPlayerYCenterPosition(newPlayerRank);
 
 			_content.DOAnchorPosY(newPlayerPosition, _scrollAnimDuration).SetEase(Ease.InOutSine);
 		}
