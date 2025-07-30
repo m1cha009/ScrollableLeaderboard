@@ -1780,7 +1780,7 @@ MonoBehaviour:
   _expandAnimButton: {fileID: 1552227333}
   _content: {fileID: 1628970367}
   _infinityScrollController: {fileID: 1930090660}
-  _scrollAnimDuration: 2
+  _scrollAnimDuration: 10
   _shrinkAnimDuration: 2.5
   _expandAnimDuration: 2.5
   _translateAnimDuration: 2.5
@@ -2431,9 +2431,9 @@ MonoBehaviour:
   _viewPort: {fileID: 1148997085}
   _contentRect: {fileID: 1628970367}
   _spacing: 0
-  _lastPlayerRank: 7
-  _newPlayerRank: 1
-  _totalPlayers: 10
+  _lastPlayerRank: 12
+  _newPlayerRank: 7
+  _totalPlayers: 15
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

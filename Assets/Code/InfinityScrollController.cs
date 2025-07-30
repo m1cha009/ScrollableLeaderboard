@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -28,6 +27,7 @@ namespace Code
 		private Vector2 _previousContentPosition = Vector2.zero;
 		
 		private readonly List<Widget> _widgets = new();
+		private Dictionary<int, Widget> _widgetsByRankDict = new();
 
 		public int LastPlayerRank => _lastPlayerRank;
 		public int NewPlayerRank => _newPlayerRank;
@@ -48,7 +48,7 @@ namespace Code
 				_previousContentPosition = _contentRect.anchoredPosition;
 			}
 
-			UpdateWidgetsPosition();
+			UpdateWidgets();
 		}
 
 		private void CleanWidgets()
@@ -59,6 +59,7 @@ namespace Code
 			}
 			
 			_widgets.Clear();
+			_widgetsByRankDict.Clear();
 		}
 
 		private void Setup(int lastPlayerRank)
@@ -115,17 +116,7 @@ namespace Code
 
 		public bool TryGetPlayerWidget(int playerRank, out Widget outWidget)
 		{
-			foreach (Widget widget in _widgets)
-			{
-				if (widget.GetRank() == playerRank)
-				{
-					outWidget = widget;
-					return true;
-				}
-			}
-			
-			outWidget = null;
-			return false;
+			return _widgetsByRankDict.TryGetValue(playerRank, out outWidget);
 		}
 
 		public List<Widget> GetPlayerWidgetsBelowCurrentRank(int playerRank)
@@ -145,17 +136,22 @@ namespace Code
 
 		public void RemoveWidget(Widget playerWidget)
 		{
-			foreach (var widget in _widgets)
+			if (playerWidget == null)
+				return;
+			
+			Destroy(playerWidget.gameObject);
+			
+			_widgets.Remove(playerWidget);
+			_widgetsByRankDict.Remove(playerWidget.GetRank());
+			
+			_lastWidgetIndex--;
+		}
+		
+		public void UpdateWidgetData(int centerPlayerRank)
+		{
+			if (TryGetPlayerWidget(centerPlayerRank, out var centerWidget))
 			{
-				if (widget == playerWidget)
-				{
-					Destroy(widget.gameObject);
-					_widgets.Remove(widget);
-
-					_lastWidgetIndex--;
-					
-					return;
-				}
+				centerWidget.Setup(centerPlayerRank + 1);
 			}
 		}
 
@@ -183,6 +179,7 @@ namespace Code
 				widget.SetPosition(new Vector2(0, -i * (_widgetHeight + _spacing)));
 				
 				_widgets.Add(widget);
+				_widgetsByRankDict.Add(i, widget);
 			}
 		}
 
@@ -192,7 +189,7 @@ namespace Code
 			_contentRect.sizeDelta = new Vector2(_contentRect.sizeDelta.x, totalHeight);
 		}
 
-		private bool UpdateWidgetsPosition()
+		private bool UpdateWidgets()
 		{
 			var upperThreshold = _previousContentPosition.y + _widgetHeight + _spacing;
 			var lowerThreshold = _previousContentPosition.y - _widgetHeight - _spacing;
@@ -202,6 +199,8 @@ namespace Code
 				MoveWidgetToBottom();
 				
 				_centerPlayerRank++;
+				
+				UpdateWidgetData(_centerPlayerRank);
 				
 				_previousContentPosition.y = upperThreshold;
 
@@ -213,6 +212,8 @@ namespace Code
 				MoveWidgetToTop();
 
 				_centerPlayerRank--;
+
+				UpdateWidgetData(_centerPlayerRank);
 				
 				var positionY = _contentRect.anchoredPosition.y + (lowerThreshold - _contentRect.anchoredPosition.y);
 				_previousContentPosition = new Vector2(0, positionY);
@@ -223,24 +224,19 @@ namespace Code
 			return false;
 		}
 
-		private void UpdateWidgetData(int centerPlayerRank)
-		{
-			// get widget by rank
-			if (TryGetPlayerWidget(centerPlayerRank, out var centerWidget))
-			{
-				
-			}
-		}
-
 		private void MoveWidgetToBottom()
 		{
 			var firstWidget = _widgets[_firstWidgetIndex];
 			var lastWidget = _widgets[_lastWidgetIndex];
 			
 			var newPosition = lastWidget.GetPosition().y + -lastWidget.GetHeight() + _spacing;
+
+			_widgetsByRankDict.Remove(firstWidget.GetRank());
 			
 			firstWidget.SetPosition(new Vector2(0, newPosition));
 			firstWidget.Setup(lastWidget.GetRank() + 1);
+			
+			_widgetsByRankDict[firstWidget.GetRank()] = firstWidget;
 			
 			_lastWidgetIndex = _firstWidgetIndex;
 			_firstWidgetIndex = (_firstWidgetIndex + 1) % _widgets.Count;
@@ -253,11 +249,15 @@ namespace Code
 			
 			var lastWidget = _widgets[_lastWidgetIndex];
 			
+			_widgetsByRankDict.Remove(lastWidget.GetRank());
+			
 			var newPosition = firstWidget.GetPosition().y + lastWidget.GetHeight() + _spacing;
 			
 			lastWidget.SetPosition(new Vector2(0, newPosition));
 			lastWidget.Setup(firstWidget.GetRank() - 1);
 			lastWidget.SetTag("Last");
+			
+			_widgetsByRankDict[lastWidget.GetRank()] = lastWidget;
 			
 			_firstWidgetIndex = _lastWidgetIndex;
 			_lastWidgetIndex = (_lastWidgetIndex - 1 + _widgets.Count) % _widgets.Count;

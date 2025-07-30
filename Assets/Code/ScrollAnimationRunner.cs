@@ -36,7 +36,6 @@ namespace Code
 			_expandAnimButton.onClick.RemoveListener(StartExpandWidgetAnimation);
 		}
 		
-
 		private void StartScrollAnimation()
 		{
 			var newPlayerRank = _infinityScrollController.NewPlayerRank;
@@ -72,10 +71,11 @@ namespace Code
 			_infinityScrollController.RemoveWidget(lastPlayerWidget);
 		}
 
-
 		private void StartExpandWidgetAnimation()
 		{
 			var newPlayerRank = _infinityScrollController.NewPlayerRank;
+			
+			_infinityScrollController.UpdateWidgetData(newPlayerRank);
 			
 			var newPlayerPosition = _infinityScrollController.GetPlayerPosition(newPlayerRank);
 			
@@ -86,8 +86,6 @@ namespace Code
 			
 			widget.transform.DOScaleY(1, _expandAnimDuration).SetEase(Ease.InOutSine);
 			
-			// Change below players rank
-
 			StartTranslateWidgetsAnimation(newPlayerRank, false);
 		}
 		
