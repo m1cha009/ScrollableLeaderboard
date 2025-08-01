@@ -26,9 +26,9 @@ namespace Code
 
 		public void SetPosition(Vector2 newPosition)
 		{
-			Rect.anchorMin = new Vector2(0.5f, 1f);
-			Rect.anchorMax = new Vector2(0.5f, 1f);
-			Rect.pivot = new Vector2(0.5f, 1f);
+			// Rect.anchorMin = new Vector2(0.5f, 1f);
+			// Rect.anchorMax = new Vector2(0.5f, 1f);
+			// Rect.pivot = new Vector2(0.5f, 1f);
 			
 			Rect.anchoredPosition = newPosition;
 		}
